@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Highlight Gmail Domains</title>
+        <link rel="stylesheet" type="text/css" href="content.css" />
+    </head>
+    <body>
+        <form>
+            <table>
+                <tr>
+                    <th>Domain</th>
+                    <th>Foregound</th>
+                    <th>Background</th>
+                    <th>Preview</th>
+                    <th></th>
+                </tr>
+            </table>
+            <p>
+                <b>Generated values:</b>
+                <br>
+                <label for="sat">Saturation:</label>
+                <input type="number" id="sat" name="sat" min="0" max="100">
+                <br>
+                <label for="lum">Lightness:</label>
+                <input type="number" id="lum" name="lum" min="0" max="100">
+            </p>
+            <p><button type="button" id="add">Add</button> <button type="button" id="save">Save</button></p>
+        </form>
+        <script id="row" type="text/html">
+            <tr>
+                <td>
+                    <input type="text" name="domain" value="__domain__">
+                </td>
+                <td>
+                    <input type="text" name="fg" value="__fg__" class="preview">
+                </td>
+                <td>
+                    <input type="text" name="bg" value="__bg__" class="preview">
+                </td>
+                <td>
+                    <span class="preview email-address">Preview</span>
+                </td>
+                <td>
+                    <button type="button" class="remove">Remove</button>
+                </td>
+            </tr>
+        </script>
+        <script src="utils.js"></script>
+        <script src="options.js"></script>
+    </body>
+</html>
