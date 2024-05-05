@@ -52,7 +52,19 @@ function highlightEmails(element) {
 
 function getSetEmailColors(email) {
     var emailDomain = email.split('@')[1];
-    return state.domains[emailDomain] || getHashEmailColors(email);
+    var domainColor = state.domains[emailDomain];
+    if (domainColor) {
+        return domainColor;
+    }
+    var names = emailDomain.split('.');
+    for (var i = -names.length; i < 0; ++i) {
+        var emailDomain = `.${names.slice(i).join('.')}`
+        var domainColor = state.domains[emailDomain];
+        if (domainColor) {
+            return domainColor;
+        }
+    }
+    return getHashEmailColors(email);
 }
 
 function getHashEmailColors(email) {
