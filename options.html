@@ -24,10 +24,15 @@
                 <label for="lum">Lightness:</label>
                 <input type="number" id="lum" name="lum" min="0" max="100">
             </p>
-            <p><button type="button" id="add">Add</button> <button type="button" id="save">Save</button></p>
+            <p>
+                <button type="button" id="add">Add</button>
+                <button type="button" id="save">Save</button>
+                <button type="button" id="copy">Copy</button>
+                <button type="button" id="paste">Paste</button>
+            </p>
         </form>
         <script id="row" type="text/html">
-            <tr>
+            <tr class="domain">
                 <td>
                     <input type="text" name="domain" value="__domain__">
                 </td>

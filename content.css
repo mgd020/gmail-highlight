@@ -2,12 +2,12 @@
     border: 0 !important;
     padding: 2px 4px !important;
     border-radius: 4px !important;
-    -webit-border-radius: 4px !important;
+    -webkit-border-radius: 4px !important;
     box-sizing: border-box !important;
-    -webit-box-sizing: border-box !important;
+    -webkit-box-sizing: border-box !important;
 }
 
 .email-address * {
     color: inherit !important;
-    background-color: none !important;
+    background-color: transparent !important;
 }

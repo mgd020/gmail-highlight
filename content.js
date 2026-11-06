@@ -17,22 +17,20 @@ function load() {
 }
 
 function reload(cb) {
-    chrome.storage.sync.get({
+    storageGet({
         domains: null,
         sat: 100,
         lum: 90,
-    }, function (items) {
+    }).then(function (items) {
         state = items;
-        domains = items.domains;
+        var domains = items.domains;
         if (domains && Object.keys(domains).length) {
             getEmailColors = getSetEmailColors;
         } else {
             getEmailColors = getHashEmailColors;
         }
         highlightEmails();
-        if (cb) {
-            cb();
-        }
+        if (cb) cb();
     });
 }
 
@@ -52,19 +50,7 @@ function highlightEmails(element) {
 
 function getSetEmailColors(email) {
     var emailDomain = email.split('@')[1];
-    var domainColor = state.domains[emailDomain];
-    if (domainColor) {
-        return domainColor;
-    }
-    var names = emailDomain.split('.');
-    for (var i = -names.length; i < 0; ++i) {
-        var emailDomain = `.${names.slice(i).join('.')}`
-        var domainColor = state.domains[emailDomain];
-        if (domainColor) {
-            return domainColor;
-        }
-    }
-    return getHashEmailColors(email);
+    return state.domains[emailDomain] || getHashEmailColors(email);
 }
 
 function getHashEmailColors(email) {
@@ -74,4 +60,4 @@ function getHashEmailColors(email) {
 }
 
 addEventListener("load", load);
-chrome.storage.onChanged.addListener(reload);
+extension.storage.onChanged.addListener(reload);

@@ -1,19 +1,25 @@
 {
-    "name": "Highlight Gmail Domains",
-    "version": "1.0",
-    "description": "Highlight the emails of people from different domains",
-    "manifest_version": 2,
-    "content_scripts": [
-        {
-            "matches": [
-                "https://mail.google.com/mail/*",
-                "https://www.google.com/calendar/*"
-            ],
-            "js": ["utils.js", "content.js"],
-            "css": ["content.css"],
-            "run_at": "document_end"
-        }
-    ],
-    "permissions": ["storage"],
-    "options_page": "options.html"
+  "name": "Highlight Gmail Domains",
+  "version": "1.0",
+  "description": "Highlight the emails of people from different domains",
+  "manifest_version": 3,
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "gmail-highlight@example.com",
+      "strict_min_version": "109.0"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://mail.google.com/mail/*",
+        "https://www.google.com/calendar/*"
+      ],
+      "js": ["utils.js", "content.js"],
+      "css": ["content.css"],
+      "run_at": "document_end"
+    }
+  ],
+  "permissions": ["storage"],
+  "options_page": "options.html"
 }
