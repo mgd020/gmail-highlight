@@ -21,5 +21,10 @@
     }
   ],
   "permissions": ["storage"],
+  "host_permissions": ["https://*/*", "http://*/*"],
+  "background": {
+    "scripts": ["background.js"],
+    "service_worker": "background.js"
+  },
   "options_page": "options.html"
 }

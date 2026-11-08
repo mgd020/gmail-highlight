@@ -59,3 +59,18 @@ function storageSet(values) {
         }
     });
 }
+
+function sendMessage(message) {
+    if (globalThis.browser) {
+        return globalThis.browser.runtime.sendMessage(message);
+    }
+    return new Promise(function (resolve, reject) {
+        extension.runtime.sendMessage(message, function (response) {
+            if (extension.runtime.lastError) {
+                reject(extension.runtime.lastError);
+            } else {
+                resolve(response);
+            }
+        });
+    });
+}

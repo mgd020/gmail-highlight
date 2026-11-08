@@ -2,52 +2,76 @@
 <html>
     <head>
         <title>Highlight Gmail Domains</title>
-        <link rel="stylesheet" type="text/css" href="content.css" />
+        <link rel="stylesheet" type="text/css" href="options.css" />
     </head>
     <body>
-        <form>
-            <table>
-                <tr>
-                    <th>Domain</th>
-                    <th>Foregound</th>
-                    <th>Background</th>
-                    <th>Preview</th>
-                    <th></th>
-                </tr>
-            </table>
-            <p>
-                <b>Generated values:</b>
-                <br>
-                <label for="sat">Saturation:</label>
-                <input type="number" id="sat" name="sat" min="0" max="100">
-                <br>
-                <label for="lum">Lightness:</label>
-                <input type="number" id="lum" name="lum" min="0" max="100">
-            </p>
-            <p>
-                <button type="button" id="add">Add</button>
-                <button type="button" id="save">Save</button>
-                <button type="button" id="copy">Copy</button>
-                <button type="button" id="paste">Paste</button>
-            </p>
-        </form>
+        <main>
+            <header>
+                <h1>Highlight Gmail Domains</h1>
+                <p>Customize how email addresses are highlighted by domain.</p>
+            </header>
+            <form>
+                <section class="panel">
+                    <div class="section-heading">
+                        <div>
+                            <h2>Domain colors</h2>
+                            <p>Set colors for specific domains. Unlisted domains use generated colors.</p>
+                        </div>
+                        <button type="button" id="add">Add domain</button>
+                    </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th scope="col">Domain</th>
+                                    <th scope="col">Foreground</th>
+                                    <th scope="col">Background</th>
+                                    <th scope="col">Preview</th>
+                                    <th scope="col"><span class="visually-hidden">Actions</span></th>
+                                </tr>
+                            </thead>
+                            <tbody id="domain-rows"></tbody>
+                        </table>
+                    </div>
+                </section>
+                <section class="panel generated">
+                    <div>
+                        <h2>Generated colors</h2>
+                        <p>Used when a domain has no saved colors or theme color.</p>
+                    </div>
+                    <div class="settings-grid">
+                        <label for="sat">Saturation <input type="number" id="sat" name="sat" min="0" max="100"></label>
+                        <label for="lum">Lightness <input type="number" id="lum" name="lum" min="0" max="100"></label>
+                    </div>
+                </section>
+                <footer>
+                    <button type="button" id="copy">Copy settings</button>
+                    <button type="button" id="paste">Paste settings</button>
+                    <button type="button" id="save" class="primary">Save changes</button>
+                </footer>
+            </form>
+        </main>
         <script id="row" type="text/html">
             <tr class="domain">
                 <td>
                     <input type="text" name="domain" value="__domain__">
                 </td>
                 <td>
-                    <input type="text" name="fg" value="__fg__" class="preview">
+                    <div class="color-control">
+                        <input type="color" class="color-picker" data-color="fg" aria-label="Choose foreground color">
+                        <input type="text" name="fg" value="__fg__" class="preview hex-color" aria-label="Foreground color value" inputmode="text" maxlength="6" pattern="([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})" placeholder="fff or ff0022">
+                    </div>
                 </td>
                 <td>
-                    <input type="text" name="bg" value="__bg__" class="preview">
+                    <div class="color-control">
+                        <input type="color" class="color-picker" data-color="bg" aria-label="Choose background color">
+                        <input type="text" name="bg" value="__bg__" class="preview hex-color" aria-label="Background color value" inputmode="text" maxlength="6" pattern="([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})" placeholder="fff or ff0022">
+                    </div>
                 </td>
                 <td>
                     <span class="preview email-address">Preview</span>
                 </td>
-                <td>
-                    <button type="button" class="remove">Remove</button>
-                </td>
+                <td><button type="button" class="remove">Remove</button></td>
             </tr>
         </script>
         <script src="utils.js"></script>

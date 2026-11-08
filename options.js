@@ -1,5 +1,6 @@
 var rowTemplate;
 var table;
+var tableBody;
 
 var defaultValue = {
     domains: {},
@@ -9,6 +10,7 @@ var defaultValue = {
 
 function load() {
     table = document.querySelector("table");
+    tableBody = document.querySelector("#domain-rows");
     rowTemplate = document.querySelector("#row").text;
     storageGet(defaultValue).then(render);
 }
@@ -17,7 +19,7 @@ function save() {
     var domains = {};
     var formData = new FormData(document.querySelector('form'));
     zip(formData.getAll("domain"), formData.getAll("fg"), formData.getAll("bg")).forEach(function(v) {
-        domains[v[0]] = {fg: v[1], bg: v[2]}
+        domains[v[0]] = {fg: storedColor(v[1]), bg: storedColor(v[2])}
     });
     storageSet({
         domains: domains,
@@ -45,14 +47,17 @@ function paste() {
 
 function render(items) {
     table = document.querySelector("table");
+    tableBody = document.querySelector("#domain-rows");
     rowTemplate = document.querySelector("#row").text;
     table.querySelectorAll('tr.domain').forEach(function (tr) {
         tr.remove();
     });
-    for (var domain in items.domains) {
+    Object.keys(items.domains).sort(function (a, b) {
+        return a.localeCompare(b, undefined, {sensitivity: "base"});
+    }).forEach(function (domain) {
         var colors = items.domains[domain];
         addRow({domain:domain, fg:colors.fg, bg:colors.bg});
-    }
+    });
     document.querySelector('#sat').value = items.sat;
     document.querySelector('#lum').value = items.lum;
 }
@@ -60,28 +65,90 @@ function render(items) {
 function addRow(values) {
     values = values || {};
     var rowHTML = rowTemplate.replace(/__domain__|__fg__|__bg__/g, function(match) {
-        return values[match.slice(2, -2)] || "";
+        var key = match.slice(2, -2);
+        var value = values[key] || "";
+        return key === "fg" || key === "bg" ? displayColorValue(value) : value;
     });
-    table.insertAdjacentHTML("beforeend", rowHTML);
-    var row = table.querySelector('tr.domain:last-of-type');
+    tableBody.insertAdjacentHTML("beforeend", rowHTML);
+    var row = tableBody.lastElementChild;
     row.querySelector(".remove").addEventListener("click", function(e) {
         e.preventDefault();
-        table.removeChild(row);
+        row.remove();
         return false;
     });
     row.querySelectorAll('input.preview').forEach(function (e) {
-        e.addEventListener("change", function() {
+        e.value = displayColorValue(e.value);
+        function syncPicker() {
+            e.value = e.value.replace(/[^0-9a-f]/gi, '').slice(0, 6).toLowerCase();
+            var picker = row.querySelector('.color-picker[data-color="' + e.name + '"]');
+            if (picker && isHexColor(e.value)) {
+                var pickerHex = expandHex(e.value);
+                picker.value = '#' + pickerHex;
+                picker.setAttribute('value', '#' + pickerHex);
+            }
             updatePreview(row);
-        });
+        }
+        e.addEventListener("input", syncPicker);
+        e.addEventListener("change", syncPicker);
+        e.addEventListener("blur", syncPicker);
+    });
+    row.querySelectorAll('input.color-picker').forEach(function (picker) {
+        var text = row.querySelector('input[name="' + picker.dataset.color + '"]');
+        var hex = isHexColor(text.value) ? '#' + expandHex(text.value) : cssColorToHex(text.value);
+        if (hex) picker.value = hex;
+        function syncText() {
+            text.value = picker.value.slice(1);
+            updatePreview(row);
+        }
+        picker.addEventListener("input", syncText);
+        picker.addEventListener("change", syncText);
     });
     updatePreview(row);
     return row;
 }
 
+function cssColorToHex(value) {
+    var probe = document.createElement('span');
+    probe.style.color = value;
+    if (!probe.style.color) return null;
+    document.body.appendChild(probe);
+    var computed = getComputedStyle(probe).color;
+    probe.remove();
+    var match = computed.match(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/);
+    if (!match) return null;
+    return '#' + [match[1], match[2], match[3]].map(function (channel) {
+        return Number(channel).toString(16).padStart(2, '0');
+    }).join('');
+}
+
+function isHexColor(value) {
+    return /^(?:[0-9a-f]{3}|[0-9a-f]{6})$/i.test(value);
+}
+
+function expandHex(value) {
+    return value.length === 3 ? value.split('').map(function (part) {
+        return part + part;
+    }).join('') : value;
+}
+
+function displayColorValue(value) {
+    var withoutHash = value.trim().replace(/^#/, '');
+    if (isHexColor(withoutHash)) return withoutHash.toLowerCase();
+    var hex = cssColorToHex(value);
+    return hex ? hex.slice(1) : withoutHash;
+}
+
+function storedColor(value) {
+    value = value.trim();
+    return isHexColor(value) ? '#' + value.toLowerCase() : value;
+}
+
 function updatePreview(row) {
-    var preview = row.querySelectorAll('.preview');
-    preview[2].style.color = preview[0].value;
-    preview[2].style.background = preview[1].value;
+    var preview = row.querySelector('.email-address');
+    var foreground = row.querySelector('input[name="fg"]').value;
+    var background = row.querySelector('input[name="bg"]').value;
+    preview.style.color = storedColor(foreground);
+    preview.style.backgroundColor = storedColor(background);
 }
 
 document.addEventListener("DOMContentLoaded", load);
